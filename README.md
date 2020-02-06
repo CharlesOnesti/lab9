@@ -2,12 +2,12 @@
 ## lab9
 
 
-Before you start working, add the extra remote repository for lab9. To do so, run:
 
-`git remote add distribution https://github.com/cs51/lab9.git`
 
-To check for updates, run:
+Accept the Github Classroom assignnment at 
+[url.cs51.io/lab9](http://url.cs51.io/lab9). 
 
-`git pull distribution master`
+If this does not work _and a TF advises_, fork and then clone the repository at 
+[http://github.com/cs51/lab9](http://github.com/cs51/lab9) 
+and proceed as usual.
 
-You should run this periodically to check for updates.
