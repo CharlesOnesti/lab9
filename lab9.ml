@@ -12,7 +12,7 @@ This lab practices concepts of substitution semantics.
 (*====================================================================
 Part 1: Substitution semantics derivation
 
-In this part, you'll work out the formal derivation of the
+In this part of the lab, you'll work out the formal derivation of the
 substitution semantics for the expression
 
     let x = 3 + 5 in
@@ -37,10 +37,10 @@ expression 3 + 5.
 
 (* ANSWER:
 
-    3 + 5 =>
-          | 3 => 3          (R_int)
-          | 5 => 5          (R_int)
-          => 8              (R_+)
+    3 + 5 ⇓
+          | 3 ⇓ 3          (R_int)
+          | 5 ⇓ 5          (R_int)
+          ⇓ 8              (R_+)
 
 (This derivation was actually given in the reading in Section
 13.1. We've annotated each line with the semantic rule that it
@@ -50,15 +50,15 @@ uses. You should do that too below.) *)
 Exercise 2. What is the result of the following substitution according
 to the definition in Figure 13.3?
 
-    (x + 5) [x |-> 3]
+    (x + 5) [x ↦ 3]
 ....................................................................*)
 
 (* ANSWER: Carrying out each step in the derivation:
 
-    (x + 5) [x |-> 3]
-        = x [x |-> 3] + 5 [x |-> 3]    (by Eq. 4)
-        = 3 + 5 [x |-> 3]              (by Eq. 2)
-        = 3 + 5                        (by Eq. 1)
+    (x + 5) [x ↦ 3]
+        = x [x ↦ 3] + 5 [x ↦ 3]      (by Eq. 4)
+        = 3 + 5 [x ↦ 3]              (by Eq. 2)
+        = 3 + 5                      (by Eq. 1)
 
    Again, we've labeled each line with the number of the equation that
    was used from the set of equations for substitution in Figure
@@ -71,10 +71,10 @@ expression let x = 3 in x + 5.
 
 (* ANSWER:
 
-    let x = 3 in x + 5 =>
-          | 3 => 3          (R_int)
-          | 3 + 5 => 8      (Exercises 2 and 1)
-          => 8              (R_let)
+    let x = 3 in x + 5 ⇓
+                       | 3 ⇓ 3          (R_int)
+                       | 3 + 5 ⇓ 8      (Exercises 2 and 1)
+                       ⇓ 8              (R_let)
 
    Note the labeling of one of the steps with the prior results from
    previous exercises. *)
@@ -96,7 +96,7 @@ expression 6 * 6.
 Exercise 6. What is the result of the following substitution according
 to the definition in Figure 13.3?  
 
-    (x * x) [x |-> 6]
+    (x * x) [x ↦ 6]
 ....................................................................*)
 
 (*....................................................................
@@ -106,12 +106,12 @@ equation in some exercises below. What should such an equation look
 like? (Below, we'll refer to this as Eq. 11.)
 ....................................................................*)
 
-(*    (P R)[x |-> Q] = ????    *)
+(*    (P R)[x ↦ Q] = ????    *)
 (*....................................................................
 Exercise 8. What is the result of the following substitution according
 to the definition in Figure 13.3?
 
-    ((fun x -> x * x) (x - 2)) [x |-> 8]
+    ((fun x -> x * x) (x - 2)) [x ↦ 8]
 ....................................................................*)
 
 (*....................................................................
@@ -157,15 +157,15 @@ Exercise 12: What expressions are specified by the following
 substitutions? Show all the steps as per the definition of
 substitution given in the textbook, Figure 13.3.
 
-1. (x + 1)[x |-> 50] 
+1. (x + 1)[x ↦ 50] 
 
-2. (x + 1)[y |-> 50]
+2. (x + 1)[y ↦ 50]
 
-3. (x * x)[x |-> 2]
+3. (x * x)[x ↦ 2]
 
-4. (let x = y * y in x + x)[x |-> 3]
+4. (let x = y * y in x + x)[x ↦ 3]
 
-5. (let x = y * y in x + x)[y |-> 3]
+5. (let x = y * y in x + x)[y ↦ 3]
 
 ....................................................................*)
 
@@ -224,8 +224,8 @@ type expr =
   | Let of varspec * expr * expr ;;
 
 (*....................................................................
-Exercise 15: Write a function free_vars : expr -> varspec Set.t that
-returns a set of varspecs corresponding to the free variables in the
+Exercise 15: Write a function `free_vars : expr -> varspec Set.t` that
+returns a set of `varspec`s corresponding to the free variables in the
 expression.
 
 The free variable rules in this simple language are a subset of those
@@ -233,10 +233,10 @@ found in Figure 13.3, but we encourage you to first try to determine
 the rules on your own, consulting the textbook only as
 necessary.
 
-You'll need to use the Set module for this exercise to complete the
-definition of the VarSet module by using the Set.Make functor. More
-documentation on the Set module can be found at:
-https://caml.inria.fr/pub/docs/manual-ocaml/libref/Set.html
+You'll need to use the `Set` module for this exercise to complete the
+definition of the `VarSet` module by using the `Set.Make`
+functor. More documentation on the `Set` module can be found at
+https://caml.inria.fr/pub/docs/manual-ocaml/libref/Set.html .
 
 You should get behavior such as this, in calculating the free
 variables in the expression
@@ -256,27 +256,29 @@ let free_vars (exp : expr) =
   failwith "free_vars not implemented"
 
 (*......................................................................
-Exercise 16: Write a function subst : expr -> varspec -> expr -> expr
-that performs substitution, that is, subst p x q returns the
-expression that is the result of substituting q for the variable x in
-the expression p.
+Exercise 16: Write a function `subst : expr -> varspec -> expr ->
+expr` that performs substitution, that is, `subst p x q` returns the
+expression that is the result of substituting `q` for the variable `x`
+in the expression `p`.
 
 The necessary substitution rules for this simple language are as
 follows:
 
-m[x |-> P] = m                           (where m is some integer value)
+m[x ↦ P] = m                           (where m is some integer value)
 
-x[x |-> P] = P
+x[x ↦ P] = P
 
-y[x |-> P] = y
+y[x ↦ P] = y                    (where x and y are distinct variables)
 
-(Q + R)[x |-> P] = Q[x |-> P] + R[x |-> P]
-                                    (and similarly for other binary ops)
+(~- Q)[x ↦ P] = ~- Q[x ↦ P]        (and similarly for other unary ops)
 
-(let x = Q in R)[x |-> P] = let x = Q[x |-> P] in R
+(Q + R)[x ↦ P] = Q[x ↦ P] + R[x ↦ P]
+                                  (and similarly for other binary ops)
 
-(let y = Q in R)[x |-> P] = let y = Q[x |-> P] in R[x |-> P]
-                                              (where x does not equal y)
+(let x = Q in R)[x ↦ P] = let x = Q[x ↦ P] in R
+
+(let y = Q in R)[x ↦ P] = let y = Q[x ↦ P] in R[x ↦ P]
+                                (where x and y are distinct variables)
 
 You should get the following behavior:
 
@@ -296,9 +298,10 @@ let subst (exp : expr) (var_name : varspec) (repl : expr) : expr =
   failwith "subst not implemented" ;;
 
 (*......................................................................
-Exercise 17: Complete the eval function below. Try to implement these
-functions from scratch. If you get stuck, however, a good (though
-incomplete) start can be found in section 13.4.2 of the textbook.
+Exercise 17: Complete the `eval` function below. Try to implement
+these functions from scratch. If you get stuck, however, a good
+(though incomplete) start can be found in section 13.4.2 of the
+textbook.
 ......................................................................*)
 
 (* Please use the provided exceptions as appropriate. *)
@@ -309,10 +312,12 @@ let eval (e : expr) : expr =
   failwith "eval not implemented"
 
 (*......................................................................
-Go ahead and test eval by evaluating some arithmetic expressions and 
+Go ahead and test `eval` by evaluating some arithmetic expressions and 
 let bindings.
 
-For instance, try the following: 
+For instance, try the following expression, which is essentially 
+
+       let x = 6 in let y = 3 in x * y     .
 
 # eval (Let ("x", Int 6, 
                   Let ("y", Int 3, 
