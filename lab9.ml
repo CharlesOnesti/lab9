@@ -32,7 +32,7 @@ you the idea.
 
 ......................................................................
 Exercise 1. Carry out the derivation for the semantics of the
-expression 3 + 5.
+expression 3 + 5, using the semantics rules in Figure 13.5.
 ....................................................................*)
 
 (* ANSWER:
@@ -48,7 +48,7 @@ uses. You should do that too below.) *)
 
 (*....................................................................
 Exercise 2. What is the result of the following substitution according
-to the definition in Figure 13.3?
+to the definition in Figure 13.4?
 
     (x + 5) [x ↦ 3]
 ....................................................................*)
@@ -56,13 +56,13 @@ to the definition in Figure 13.3?
 (* ANSWER: Carrying out each step in the derivation:
 
     (x + 5) [x ↦ 3]
-        = x [x ↦ 3] + 5 [x ↦ 3]      (by Eq. 4)
-        = 3 + 5 [x ↦ 3]              (by Eq. 2)
-        = 3 + 5                      (by Eq. 1)
+        = x [x ↦ 3] + 5 [x ↦ 3]      (by 13.10)
+        = 3 + 5 [x ↦ 3]              (by 13.8)
+        = 3 + 5                      (by 13.7)
 
    Again, we've labeled each line with the number of the equation that
    was used from the set of equations for substitution in Figure
-   13.3. You should do that too. *)
+   13.4. You should do that too. *)
 
 (*....................................................................
 Exercise 3. Carry out the derivation for the semantics of the
@@ -94,22 +94,23 @@ expression 6 * 6.
 
 (*....................................................................
 Exercise 6. What is the result of the following substitution according
-to the definition in Figure 13.3?  
+to the definition in Figure 13.4?  
 
     (x * x) [x ↦ 6]
 ....................................................................*)
 
 (*....................................................................
-Exercise 7. The set of 10 equations defining substitution in Figure 13.3
-is missing an equation for function application. You'll need this
-equation in some exercises below. What should such an equation look
-like? (Below, we'll refer to this as Eq. 11.)
+Exercise 7. The set of 10 equations defining substitution in Figure 
+13.4 has an equation for function application. You'll need this
+equation in some exercises below. Without looking at Figure 13.4,
+what do you think such an equation should look like? Check your
+understanding against Figure 13.4. 
 ....................................................................*)
 
 (*    (P R)[x ↦ Q] = ????    *)
 (*....................................................................
 Exercise 8. What is the result of the following substitution according
-to the definition in Figure 13.3?
+to the definition in Figure 13.4?
 
     ((fun x -> x * x) (x - 2)) [x ↦ 8]
 ....................................................................*)
@@ -133,7 +134,7 @@ Part 2: Pen and paper exercises with the free variables and
 substitution definitions 
 
 In this part, you'll get more practice using the definitions of FV and
-substitution from the textbook (Figure 13.3). Feel free to jump ahead
+substitution from the textbook (Figure 13.4). Feel free to jump ahead
 to later problems if you "get it" and are finding the exercises
 tedious. *)
 
@@ -155,7 +156,7 @@ paper.
 (*....................................................................
 Exercise 12: What expressions are specified by the following
 substitutions? Show all the steps as per the definition of
-substitution given in the textbook, Figure 13.3.
+substitution given in the textbook, Figure 13.4.
 
 1. (x + 1)[x ↦ 50] 
 
@@ -229,7 +230,7 @@ returns a set of `varspec`s corresponding to the free variables in the
 expression.
 
 The free variable rules in this simple language are a subset of those
-found in Figure 13.3, but we encourage you to first try to determine
+found in Figure 13.4, but we encourage you to first try to determine
 the rules on your own, consulting the textbook only as
 necessary.
 
