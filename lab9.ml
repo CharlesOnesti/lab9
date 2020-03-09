@@ -23,6 +23,14 @@ according to the semantic rules presented in Chapter 13.
 Before beginning, what should this expression evaluate to? Test out
 your prediction in the OCaml REPL. *)
 
+(* ANSWER: The expression evaluates to 36:
+
+    # let x = 3 + 5 in
+        (fun x -> x * x) (x - 2)  ;;
+    - : int = 36
+
+*)
+
 (* The exercises will take you through the derivation stepwise, so
 that you can use the results from earlier exercises in the later
 exercises.
@@ -87,10 +95,25 @@ Exercise 4. Carry out the derivation for the semantics of the
 expression 8 - 2.
 ....................................................................*)
 
+(* ANSWER:
+
+    8 - 2 ⇓
+          | 8 ⇓ 8         (R_int)
+          | 2 ⇓ 2         (R_int)
+          ⇓ 6             (R_-)
+ *)
+
 (*....................................................................
 Exercise 5. Carry out the derivation for the semantics of the
 expression 6 * 6.
 ....................................................................*)
+
+(* ANSWER:
+
+    6 * 6 ⇓
+          | 6 ⇓ 6          (R_int)
+          | 6 ⇓ 6          (R_int)
+          ⇓ 36             (R_*)
 
 (*....................................................................
 Exercise 6. What is the result of the following substitution according
@@ -98,6 +121,13 @@ to the definition in Figure 13.4?
 
     (x * x) [x ↦ 6]
 ....................................................................*)
+
+(* ANSWER:
+
+    (x * x) [x ↦ 6]
+        = x [x ↦ 6] * x [x ↦ 6]     (by 13.10)
+        = 6 * 6                      (by 13.8 twice)
+ *)
 
 (*....................................................................
 Exercise 7. The set of 10 equations defining substitution in Figure 
@@ -107,13 +137,24 @@ what do you think such an equation should look like? Check your
 understanding against Figure 13.4. 
 ....................................................................*)
 
-(*    (P R)[x ↦ Q] = ????    *)
+(*    (P R)[x ↦ Q] = P[x ↦ Q]  R[x ↦ Q]       *)
+
 (*....................................................................
 Exercise 8. What is the result of the following substitution according
 to the definition in Figure 13.4?
 
     ((fun x -> x * x) (x - 2)) [x ↦ 8]
 ....................................................................*)
+
+(* ANSWER:
+
+    ((fun x -> x * x) (x - 2)) [x ↦ 8]
+        = ((fun x -> x * x) [x ↦ 8]) ((x - 2) [x ↦ 8])    (by 13.11)
+        = (fun x -> x * x) ((x - 2) [x ↦ 8])              (by 13.12)
+        = (fun x -> x * x) (x [x ↦ 8] - 2 [x ↦ 8])        (by 13.10)
+        = (fun x -> x * x) (8 - 2 [x ↦ 8])                (by 13.8)
+        = (fun x -> x * x) (8 - 2)                         (by 13.7)
+ *)
 
 (*....................................................................
 Exercise 9. Carry out the derivation for the semantics of the
@@ -122,12 +163,31 @@ expression
     (fun x -> x * x) (8 - 2)
 ....................................................................*)
 
+(* ANSWER:
+
+    (fun x -> x * x) (8 - 2)
+         ⇓         
+         | fun x -> x * x ⇓ fun x -> x * x    (R_fun)
+         | 8 - 2 ⇓ 6                          (Exercise 4)
+         | 6 * 6 ⇓ 36                         (Exercises 6 and 5)
+         ⇓ 36                                 (R_app)
+ *)
+
 (*....................................................................
 Exercise 10. Finally, carry out the derivation for the semantics of the
 expression
 
     let x = 3 + 5 in (fun x -> x * x) (x - 2)
 ....................................................................*)
+
+(* ANSWER:
+
+    let x = 3 + 5 in (fun x -> x * x) (x - 2) 
+         ⇓
+         | 3 + 5 ⇓ 8                              (Exercise 1)
+         | (fun x -> x * x) (8 - 2) ⇓ 36          (Exercise 8)
+         ⇓ 36                                     (R_let)
+ *)
 
 (*====================================================================
 Part 2: Pen and paper exercises with the free variables and
@@ -152,6 +212,47 @@ paper.
 4. let x = fun y -> x in x
 ....................................................................*)
 
+(* ANSWER:
+
+1. let x = 3 in let y = x in f x y
+
+      FV(let x = 3 in let y = x in f x y)
+      = (FV(let y = x in f x y) - {x}) U FV(3)
+      = (FV(f x y) - {y}) U FV(x)) - {x}
+      = ({f, x, y} - {y}) U {x}) - {x}
+      = ({f, x} U {x}) - {x}
+      = {f, x} - {x}
+      = {f}
+
+2. let x = x in let y = x in f x y
+
+      FV(let x = x in let y = x in f x y)
+      = (FV(let y = x in f x y) - {x}) U FV(x)
+      = (FV(f x y) - {y}) U FV(x)) - {x} U {x}
+      = (({f, x, y} - {y}) U {x}) - {x}) U {x}
+      = (({f, x} U {x}) - {x}) U {x}
+      = ({f, x} - {x}) U {x}
+      = {f, x}
+
+3. let x = y in let y = x in f x y
+
+      FV(let x = y in let y = x in f x y)
+      = (FV(let y = x in f x y) - {x}) U FV(y)
+      = (FV(f x y) - {y}) U FV(x)) - {x} U {y}
+      = (({f, x, y} - {y}) U {x}) - {x}) U {y}
+      = (({f, x} U {x}) - {x}) U {y}
+      = ({f, x} - {x}) U {y}
+      = {f, y}
+
+4. let x = fun y -> x in x
+
+      FV(let x = fun y -> x in x)
+      = (FV(x) - {x}) U FV(fun y -> x)
+      = ({x} - {x}) U (FV(x) - {y})
+      = {} U {x}
+      = {x}
+
+*)
 
 (*....................................................................
 Exercise 12: What expressions are specified by the following
@@ -170,6 +271,45 @@ substitution given in the textbook, Figure 13.4.
 
 ....................................................................*)
 
+(* ANSWER: 
+
+1. (x + 1)[x ↦ 50]
+      = x[x ↦ 50] + 1[x ↦ 50]         (by 13.10)
+      = 50 + 1[x ↦ 50]                (by 13.8)
+      = 50 + 1                        (by 13.7)
+
+   If you came up with the answer 51, you're confusing the
+   substitution operation, which operates purely syntactically to
+   replace portions of an expression, with evaluation, which
+   simplifies an expression to one that is semantically equivalent but
+   can be syntactically quite different.
+
+   In case you were wondering where the parentheses around (x + 1)
+   went, they disappear because those were really just in the concrete
+   syntax to notate the abstract syntax, which is what the
+   substitution operation operates on.
+
+2. (x + 1)[y ↦ 50] 
+      = x[y ↦ 50] + 1[y ↦ 50] 
+      = x + 1
+
+3. (x * x)[x ↦ 2] 
+      = x[x ↦ 2] * x[x ↦ 2]
+      = 2 * 2
+
+4. (let x = y * y in x + x)[x ↦ 3] 
+      = let x = (y * y)[x ↦ 3] in x + x            (by 13.15)
+      = let x = y[x ↦ 3] * y[x ↦ 3] in x + x       (by 13.10)
+      = let x = y * y in x + x                      (by 13.9 twice)
+
+5. (let x = y * y in x + x)[y ↦ 3]
+      = let x = (y * y)[y ↦ 3] in (x + x)[y ↦ 3]   (by 13.16)
+      = let x = y[y ↦ 3] * y[y ↦ 3] in
+        x[y ↦ 3] + x[y ↦ 3]                        (by 13.10 twice)
+      = let x = 3 * 3 in x[y ↦ 3] + x[y ↦ 3]       (by 13.8 twice)
+      = let x = 3 * 3 in x + x                      (by 13.9 twice)
+ *)
+
 (*......................................................................
 Exercise 13: For each of the following expressions, derive its final
 value using the evaluation rules in the textbook. Show all steps using
@@ -187,6 +327,41 @@ just use it directly.
 4. let x = 51 in let x = 124 in x 
 
 ......................................................................*)
+(* ANSWER:
+
+1. 2 * 25 ⇓
+          | 2 ⇓ 2              (R_int)
+          | 5 ⇓ 5              (R_int)
+          ⇓ 50                 (R_* )
+
+2. let x = 2 * 25 in x + 1 ⇓
+                           | 2 * 25 ⇓ 50       (from Exercise 13.1)
+                           | 50 + 1 ⇓
+                           |        | 50 ⇓ 50  (R_int)
+                           |        | 1 ⇓ 1    (R_int)
+                           |        ⇓ 51       (R_+)
+                           ⇓ 51                (R_let)
+
+(The 50 + 1 is the result of (x + 1)[x ↦ 50], as per Exercise 12.1.)
+
+3. let x = 2 in x * x ⇓
+                      | 2 ⇓ 2
+                      | 2 * 2 ⇓
+                      |       | 2 ⇓ 2
+                      |       | 2 ⇓ 2
+                      |       ⇓ 4
+                      ⇓ 4
+
+(The 2 * 2 is the result of (x * x)[x ↦ 2], as per Exercise 12.3.)
+
+4. let x = 51 in let x = 124 in x ⇓
+                                  | 51 ⇓ 51
+                                  | let x = 124 in x ⇓
+                                  |                  | 124 ⇓ 124
+                                  |                  | 124 ⇓ 124
+                                  |                  ⇓ 124
+                                  ⇓ 124
+ *)
 
 (*====================================================================
 Part 3: Implementing a simple arithmetic language.
@@ -213,15 +388,18 @@ type varspec = string ;;
 
 type binop =
   | Plus 
+  | Minus 
+  | Times
   | Divide ;;
 
 type unop = 
-  | NotYetImplemented ;;
+  | Negate ;;
 
 type expr =
   | Int of int
   | Var of varspec
   | Binop of binop * expr * expr
+  | Unop of unop * expr
   | Let of varspec * expr * expr ;;
 
 (*....................................................................
@@ -251,10 +429,21 @@ variables in the expression
     - : Lab9_soln.VarSet.elt list = ["x"; "y"; "z"]
 ....................................................................*)
 
-module VarSet = struct end ;;
+module VarSet = Set.Make (struct
+                            type t = varspec
+                            let compare = String.compare
+                          end) ;;
 
-let free_vars (exp : expr) =
-  failwith "free_vars not implemented"
+let rec free_vars (exp : expr) : VarSet.t =
+  match exp with
+  | Var x -> VarSet.singleton x
+  | Int _ -> VarSet.empty
+  | Unop(_, arg) -> free_vars arg
+  | Binop(_, arg1, arg2) ->
+     VarSet.union (free_vars arg1) (free_vars arg2)
+  | Let(x, def, body) -> 
+     VarSet.union (free_vars def) (VarSet.remove x (free_vars body))
+;;
 
 (*......................................................................
 Exercise 16: Write a function `subst : expr -> varspec -> expr ->
@@ -296,7 +485,19 @@ You should get the following behavior:
 ......................................................................*)
 
 let subst (exp : expr) (var_name : varspec) (repl : expr) : expr =
-  failwith "subst not implemented" ;;
+
+  (* perform this particular substitution of variable and replacement *)
+  let rec sub_this (exp : expr) : expr =
+    match exp with
+    | Var x -> if x = var_name then repl else exp
+    | Int _ -> exp
+    | Unop(op, arg) -> Unop(op, sub_this arg)
+    | Binop(op, arg1, arg2) -> Binop(op, sub_this arg1, sub_this arg2)
+    | Let(x, def, body) ->
+       if x = var_name then Let(x, sub_this def, body)
+       else Let(x, sub_this def, sub_this body) in
+  
+  sub_this exp ;;
 
 (*......................................................................
 Exercise 17: Complete the `eval` function below. Try to implement
@@ -309,8 +510,29 @@ textbook.
 exception UnboundVariable of string ;;
 exception IllFormed of string ;;
 
-let eval (e : expr) : expr =
-  failwith "eval not implemented"
+let binopeval (op : binop) (v1 : expr) (v2 : expr) : expr =
+  match op, v1, v2 with
+  | Plus, Int x1, Int x2 -> Int (x1 + x2)
+  | Plus, _, _ -> raise (IllFormed "can't add non-integers")
+  | Minus, Int x1, Int x2 -> Int (x1 - x2)
+  | Minus, _, _ -> raise (IllFormed "can't subtract non-integers")
+  | Times, Int x1, Int x2 -> Int (x1 * x2) 
+  | Times, _, _ -> raise (IllFormed "can't multiply non-integers")
+  | Divide, Int x1, Int x2 -> Int (x1 / x2)
+  | Divide, _, _ -> raise (IllFormed "can't divide non-integers") ;;
+
+let unopeval (op : unop) (e : expr) : expr = 
+  match op, e with 
+  | Negate, Int x -> Int (~- x)
+  | Negate, _ -> raise (IllFormed "can't negate non-integers")
+
+let rec eval (exp : expr) : expr =
+  match exp with
+  | Int _ -> exp
+  | Var x -> raise (UnboundVariable x)
+  | Unop (op, exp1) -> unopeval op (eval exp1)
+  | Binop (op, exp1, exp2) -> binopeval op (eval exp1) (eval exp2)
+  | Let (x, def, body) -> eval (subst body x (eval def)) ;;
 
 (*......................................................................
 Go ahead and test `eval` by evaluating some arithmetic expressions and 
